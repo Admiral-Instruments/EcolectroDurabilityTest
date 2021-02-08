@@ -1,15 +1,16 @@
 {
+    "sampling-rate": 5,
+    "duration": 120,
+    "save-path": ".",
     "Power-Supply-options": {
-        "com-pot": "COM3",
-        "sampling-rate": 5,
-        "duration": 120,
-        "save-path": ".",
+        "com-port": "COM3",
+        "current-setpoint": 1.2,
         "maximum-voltage": 10,
         "minimum-voltage": -10
     },
     "Temperature-Controller-options": {
         "com-port": "COM2",
-        "temperature": 50
+        "temperature-setpoint": 50
     },
     "Pump-Controller-options": {
         "com-port": "COM1"
