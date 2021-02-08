@@ -18,6 +18,8 @@ class BKOperator:
         Instructs the BK power supply to set the current to the input argument, given in Amperes.
         """
 
+        self.__send_command__("set current")
+
         # feed in command here for pyserial, then check the measured current for success
         return True
 
@@ -26,12 +28,16 @@ class BKOperator:
         Returns the current reading from the BK power supply in Amperes.
         """
 
+        self.__send_command__("get current")
+
         return 4.2
 
     def get_voltage(self) -> float:
         """
         Returns the voltage reading from the BK power supply in Voltages.
         """
+
+        self.__send_command__("get voltage")
 
         return 7.2
 
@@ -40,4 +46,16 @@ class BKOperator:
         Powers down the BK power supply, returns true on success.
         """
 
+        self.__send_command__("power down")
+
+        return True
+
+    def set_voltage_limits(self, min_voltage: float, max_voltage: float) -> bool:
+        """
+        Sets the voltage protection limits
+        """
+
+        self.__send_command__("set voltage limit")
+
+    def __send_command__(self, command: str) -> bool:
         return True
