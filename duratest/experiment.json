@@ -1,7 +1,7 @@
 {
     "sampling-rate": 5,
     "duration": 120,
-    "save-path": ".",
+    "save-path": "test.csv",
     "Power-Supply-options": {
         "com-port": "COM3",
         "current-setpoint": 1.2,

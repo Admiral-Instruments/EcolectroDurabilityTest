@@ -24,13 +24,26 @@ class Experiment:
         self.temp_controller = self.__get_new_TemperatureController(self.temperature_options)
 
     async def run_experiment(self):
+        self.__start_experiment__()
         while self.duration > 0:
-            self.__get_readings__()
+            self.__save_reading__()
             self.duration -= self.sampling_rate
             await asyncio.sleep(self.sampling_rate)
 
-    def __get_readings__(self) -> bool:
-        return True
+    def __start_experiment__(self):
+        self.bk_operator.set_current(self.bk_options["current-setpoint"])
+        self.temp_controller.set_temperature(self.temperature_options["temperature-setpoint"])
+        with open(self.save_path, "w") as out:
+            out.write("Current, Voltage, Temperature\n")
+
+    def __save_reading__(self) -> bool:
+        with open(self.save_path, "a") as out:
+            readings = map(str, self.__get_readings__())
+            out.write(", ".join(readings))
+            out.write("\n")
+
+    def __get_readings__(self) -> tuple:
+        return (1, 2, 3)
 
     def __get_new_BK__(self, bk_dict: dict) -> BKOperator:
         try:
