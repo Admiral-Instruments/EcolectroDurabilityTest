@@ -18,7 +18,6 @@
 import asyncio
 from experiment import Experiment, ExperimentError
 import logging
-logging.basicConfig(filename="experiment.log", level=logging.DEBUG, format="%(asctime)s %(message)s")
 
 
 async def main():

@@ -17,10 +17,12 @@
 
 import json
 import asyncio
+import logging
 
 from bk_operator import BKOperator
 from pump_controller import PumpController
 from temperature_controller import TemperatureController
+from os import path, makedirs
 
 
 class Experiment:
@@ -31,6 +33,14 @@ class Experiment:
         self.sampling_rate = data["sampling-rate"]
         self.duration = data["duration"]
         self.save_path = data["save-path"]
+        save_dir = path.dirname(self.save_path)
+
+        if not path.exists(save_dir):
+            makedirs(save_dir)
+
+        # save log in same directory that .csv data is stored
+        logging.basicConfig(filename=path.join(save_dir, "experiment.log"),
+                            level=logging.DEBUG, format="%(asctime)s %(message)s")
 
         self.bk_options = data["Power-Supply-options"]
         self.pump_options = data["Pump-Controller-options"]

@@ -1,7 +1,7 @@
 {
     "sampling-rate": 5,
     "duration": 120,
-    "save-path": "test.csv",
+    "save-path": "test_dir/deeper_test_dir/deepest_test_dir/test.csv",
     "Power-Supply-options": {
         "com-port": "/dev/tty.usbserial-0001",
         "current-setpoint": 1.2,
