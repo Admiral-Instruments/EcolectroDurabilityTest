@@ -1,61 +1,98 @@
-class BKOperator:
+from serial_communicator import asyncio, logging, SerialCommunicator
+
+
+class BKOperator(SerialCommunicator):
     def __init__(self, com_port: str):
+        super().__init__(com_port, "BK Power Supply")
+
+    async def verify_connection(self) -> bool:
         """
-        Attempts to make connection with a BK Operator 9115 power supply. If successful, the previous state
-        of the power supply is not preserved, so this could interrupt an ongoing experiment. If connection
-        was not successful, an IOError is thrown.
-        """
-
-        self.com_port = com_port
-
-        successful = True
-
-        if(not successful):
-            raise IOError("Connection was not successful")
-
-    def set_current(self, current: float) -> bool:
-        """
-        Instructs the BK power supply to set the current to the input argument, given in Amperes.
+        Resets the state of the BK Power Supply, waits 5 seconds for the device to reboot, then requests the
+        name of the device. If no name response is received, then the function returns False, otherwise True.
         """
 
-        self.__send_command__("set current")
+        if not self.ser.is_open:
+            logging.error("Error opening serial connection with BK Power Supply.")
+            return False
 
-        # feed in command here for pyserial, then check the measured current for success
-        return True
+        await self._send_command("*RST")
+        await asyncio.sleep(5)
+        name = await self._send_command("*IDN?")
 
-    def get_current(self) -> float:
-        """
-        Returns the current reading from the BK power supply in Amperes.
-        """
-
-        self.__send_command__("get current")
-
-        return 4.2
-
-    def get_voltage(self) -> float:
-        """
-        Returns the voltage reading from the BK power supply in Voltages.
-        """
-
-        self.__send_command__("get voltage")
-
-        return 7.2
-
-    def power_down(self) -> bool:
-        """
-        Powers down the BK power supply, returns true on success.
-        """
-
-        self.__send_command__("power down")
+        if len(name) == 0:
+            return False
 
         return True
 
-    def set_voltage_limits(self, min_voltage: float, max_voltage: float) -> bool:
+    async def set_current(self, current: float) -> bool:
         """
-        Sets the voltage protection limits
+        Instructs the BK power supply to set the current to the input argument, given in Amperes. Returns True if the
+        Power Supply acknowledges its current has been set, otherwise False.
         """
 
-        self.__send_command__("set voltage limit")
+        response = await self._send_command("set current")
 
-    def __send_command__(self, command: str) -> bool:
+        if len(response) == 0:
+            self.logger.error("Error requesting a change in the current setpoint of the power supply.")
+            return False
         return True
+
+    async def get_current(self) -> float:
+        """
+        Returns the current reading from the BK power supply in Amperes. Raises an IOError if the Power Supply fails to
+        give a reading, or if the reading is not a number.
+        """
+
+        response = await self._send_command(":func curr:dc;:fetch?")
+
+        if (len(response) == 0):
+            raise IOError("Error requesting current from Power Supply. There was no response.")
+
+        try:
+            return float(response)
+        except ValueError as err:
+            self.logger.error(f"Error converting current: {response} from Power Supply to string.")
+            raise IOError("Error requesting current from Power Supply. The reading was not a number.")
+
+    async def get_voltage(self) -> float:
+        """
+        Returns the voltage reading from the BK power supply in Voltages. Raises an IOError if the Power Supply fails to
+        give a reading, or if the reading is not a number.
+        """
+
+        response = await self._send_command(":func volt:dc;:fetch?")
+
+        if (len(response) == 0):
+            raise IOError("Error requesting voltage from Power Supply. There was no response.")
+
+        try:
+            return float(response)
+        except ValueError as err:
+            self.logger.error(f"Error converting voltage: {response} from Power Supply to string.")
+            raise IOError("Error requesting voltage from Power Supply. The reading was not a number.")
+
+    async def set_voltage_limits(self, min_voltage: float, max_voltage: float) -> bool:
+        """
+        Sets the voltage protection limits. Returns true if the device acknowledges a change in voltage
+        limits, otherwise returns false.
+        """
+
+        response = await self._send_command("set voltage limit")
+
+        if len(response) == 0:
+            self.logger.error("Error requesting a change in the voltage limits of the power supply.")
+            return False
+        return True
+
+    async def reset(self) -> bool:
+        """
+        Resets the power supply to put the system it is connected to at rest. Returns True if the Power Supply
+        acknowledges it has been reset, otherwise False.
+        """
+
+        if (self.ser is None):
+            return False
+
+        response = await self._send_command("*RST")
+
+        return len(response) > 0
