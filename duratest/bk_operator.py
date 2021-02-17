@@ -39,6 +39,8 @@ class BKOperator(SerialCommunicator):
         if len(name) == 0:
             return False
 
+        await self._send_command("outp on")
+
         return True
 
     async def set_current(self, current: float) -> bool:
@@ -47,7 +49,7 @@ class BKOperator(SerialCommunicator):
         Power Supply acknowledges its current has been set, otherwise False.
         """
 
-        response = await self._send_command("set current")
+        response = await self._send_command(f"curr {current}")
 
         if len(response) == 0:
             self.logger.error("Error requesting a change in the current setpoint of the power supply.")
@@ -60,7 +62,7 @@ class BKOperator(SerialCommunicator):
         give a reading, or if the reading is not a number.
         """
 
-        response = await self._send_command(":func curr:dc;:fetch?")
+        response = await self._send_command("meas:curr?;fetch:current")
 
         if (len(response) == 0):
             raise IOError("Error requesting current from Power Supply. There was no response.")
@@ -77,7 +79,7 @@ class BKOperator(SerialCommunicator):
         give a reading, or if the reading is not a number.
         """
 
-        response = await self._send_command(":func volt:dc;:fetch?")
+        response = await self._send_command("meas:volt?;fetch:voltage?")
 
         if (len(response) == 0):
             raise IOError("Error requesting voltage from Power Supply. There was no response.")

@@ -11,7 +11,8 @@
     },
     "Temperature-Controller-options": {
         "com-port": "COM2",
-        "temperature-setpoint": 50
+        "temperature-setpoint": 50,
+        "max-temperature": 150
     },
     "Pump-Controller-options": {
         "com-port": "COM1"

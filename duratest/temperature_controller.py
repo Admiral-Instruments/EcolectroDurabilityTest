@@ -47,7 +47,7 @@ class TemperatureController(SerialCommunicator):
         was successfully set and the device responded indicating success, otherwise False.
         """
 
-        response = await self._send_command(f"set {temperature}")
+        response = await self._send_command(f"PRoG>SP1>{temperature}")
 
         if (len(response) == 0):
             self.logger.error("The Temperature Controller failed to acknowledge a change in Temperature setpoint")

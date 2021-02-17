@@ -160,17 +160,21 @@ class Experiment:
     def _throw_on_bad_readings(self, readings: tuple) -> None:
         """
         Compares readings against known limits provided by the user and throws an ExperimentError if these
-        limits are exceeded.
+        limits are exceeded. Readings are ordered (current, voltage, temperature)
         """
 
-        if(self.previous_voltage is not None and abs(self.bk_options["max-dV"]) < abs(readings[1] - self.previous_voltage)):
+        if self.previous_voltage is not None and abs(self.bk_options["max-dV"]) < abs(readings[1] - self.previous_voltage):
             raise ExperimentError(
                 "The experiment stopped because the change in voltage exceeded the allowed tolerance for dV.")
-        if(abs(readings[1]) > abs(self.bk_options["maximum-voltage"])):
+
+        if abs(readings[1]) > abs(self.bk_options["maximum-voltage"]):
             raise ExperimentError("The experiment stopped because the maximum voltage limit was reached.")
 
-        if (abs(readings[1]) < abs(self.bk_options["minimum-voltage"])):
+        if abs(readings[1]) < abs(self.bk_options["minimum-voltage"]):
             raise ExperimentError("The experiment stopped because the minimum voltage limit was reached.")
+
+        if readings[2] > self.temperature_options["max-temperature"]:
+            raise ExperimentError("The experiment stopped because the maximum temperature was reached.")
 
         self.previous_voltage = readings[1]
 
