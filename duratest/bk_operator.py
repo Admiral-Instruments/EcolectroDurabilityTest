@@ -96,7 +96,8 @@ class BKOperator(SerialCommunicator):
         limits, otherwise returns false.
         """
 
-        response = await self._send_command("set voltage limit")
+        response = await self._send_command(f"volt:prot {max_voltage}")
+        # there doesn't appear to be a way to set the minimum voltage... TODO: test out sending these as a tuple (min,max)
 
         if len(response) == 0:
             self.logger.error("Error requesting a change in the voltage limits of the power supply.")
