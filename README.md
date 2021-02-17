@@ -5,7 +5,7 @@ This project is designed to use the [BK Precision 9115 Power
 Supply](https://www.bkprecision.com/products/power-supplies/9115-1200w-multi-range-80v-60a-dc-power-supply.html), the
 [Universal High Accuracy Digital Benchtop PID Controller with USB Temperature
 Controller](https://www.omega.com/en-us/control-monitoring/controllers/pid-controllers/p/CS8DPT-Series) and the [Pump
-Controller](https://www.admiralinstruments.com) to run a durability test on a system.
+Controller](https://www.amazon.com/gp/product/B07C3LPH3X/) to run a durability test on a system.
 
 The user communicates with the program using the [experiment.json](duratest/experiment.json) file found in the source
 (duratest) directory.
@@ -40,7 +40,7 @@ that a request is successful. However, this might not be the case so we need to 
 Data will be collected at intervals provided in the .json file for at least as long as the duration given in the .json
 file. Because of the uncertainty in response times for some of these devices, the experiment may go on longer than
 specified. This is because the application will wait until all devices have responded before proceeding to the next
-waiting period between samples.
+waiting period between samples. Data is saved by writing to the .csv file that is provided by the user. 
 
 As of right now, debugging work needs to be done remotely by running the program with the BK power supply, temperature
 controller and pump controller. The pump controller will require the user to run the application using Windows as we
