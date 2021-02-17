@@ -41,3 +41,7 @@ Data will be collected at intervals provided in the .json file for at least as l
 file. Because of the uncertainty in response times for some of these devices, the experiment may go on longer than
 specified. This is because the application will wait until all devices have responded before proceeding to the next
 waiting period between samples.
+
+As of right now, debugging work needs to be done remotely by running the program with the BK power supply, temperature
+controller and pump controller. The pump controller will require the user to run the application using Windows as we
+will be calling an executable file to communicate with the pump controller.
