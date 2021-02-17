@@ -105,8 +105,9 @@ class Experiment:
         if(not await self.bk_operator.verify_connection()):
             raise ExperimentError("The BK Power Supply has failed to verify its connection")
 
-        if (not await self.bk_operator.set_voltage_limits(self.bk_options["minimum-voltage"], self.bk_options["maximum-voltage"])):
-            raise ExperimentError("The BK Power Supply has failed to set Experiment voltage limits.")
+        # We can just check the voltage ourselves during sampling
+        #if (not await self.bk_operator.set_voltage_limits(self.bk_options["minimum-voltage"], self.bk_options["maximum-voltage"])):
+            #raise ExperimentError("The BK Power Supply has failed to set Experiment voltage limits.")
 
         if (not await self.bk_operator.set_current(self.bk_options["current-setpoint"])):
             raise ExperimentError("The BK Power Supply has failed to set the current setpoint")

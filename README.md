@@ -20,6 +20,7 @@ Inputs are as follows:
 * **Temperature Control**
     * COM Port
     * Applied Temperature (Units: Celsius)
+    * Maximum Temperature (Units: Celsius)
 * **Pump Control**
     * COM Port
 * **Other**
@@ -30,3 +31,13 @@ Inputs are as follows:
 
 
 ## Structure and Data Flow
+
+The program will read the parameters found in the json file and setup the initial connections with all devices at their
+specified COM port. When all devices have successfully connected, the experiment will proceed at the given setpoint and
+halt if any maximum or minimum end condition is hit. It is expected that every device will have a response acknowledging
+that a request is successful. However, this might not be the case so we need to keep an eye out for that.
+
+Data will be collected at intervals provided in the .json file for at least as long as the duration given in the .json
+file. Because of the uncertainty in response times for some of these devices, the experiment may go on longer than
+specified. This is because the application will wait until all devices have responded before proceeding to the next
+waiting period between samples.

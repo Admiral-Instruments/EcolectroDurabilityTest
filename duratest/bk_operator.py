@@ -62,7 +62,7 @@ class BKOperator(SerialCommunicator):
         give a reading, or if the reading is not a number.
         """
 
-        response = await self._send_command("meas:curr?;fetch:current")
+        response = await self._send_command("meas:curr?")
 
         if (len(response) == 0):
             raise IOError("Error requesting current from Power Supply. There was no response.")
@@ -79,7 +79,7 @@ class BKOperator(SerialCommunicator):
         give a reading, or if the reading is not a number.
         """
 
-        response = await self._send_command("meas:volt?;fetch:voltage?")
+        response = await self._send_command("meas:volt?")
 
         if (len(response) == 0):
             raise IOError("Error requesting voltage from Power Supply. There was no response.")
