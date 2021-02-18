@@ -1,5 +1,17 @@
 # EcolectroDurabilityTest
 
+## Developing
+
+This project uses Python 3.7+ along with the PySerial Python module. You can download any version of Python after 3.7
+following this [link](https://www.python.org/downloads/). To install PySerial, run
+```
+pip install pyserial
+```
+in your shell.
+
+For debugging, we recommend the debugger that comes with the Python extension in Visual Studio Code. A launch.json is
+already setup to allow easy access for debugging. The entrance for the program is ``duratest/__main__.py``'.
+
 ## Use
 This project is designed to use the [BK Precision 9115 Power
 Supply](https://www.bkprecision.com/products/power-supplies/9115-1200w-multi-range-80v-60a-dc-power-supply.html), the
@@ -40,7 +52,7 @@ that a request is successful. However, this might not be the case so we need to 
 Data will be collected at intervals provided in the .json file for at least as long as the duration given in the .json
 file. Because of the uncertainty in response times for some of these devices, the experiment may go on longer than
 specified. This is because the application will wait until all devices have responded before proceeding to the next
-waiting period between samples. Data is saved by writing to the .csv file that is provided by the user. 
+waiting period between samples. Data is saved by writing to the .csv file that is provided by the user.
 
 As of right now, debugging work needs to be done remotely by running the program with the BK power supply, temperature
 controller and pump controller. The pump controller will require the user to run the application using Windows as we
