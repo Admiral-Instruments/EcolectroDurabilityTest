@@ -43,13 +43,13 @@ class PumpController:
         a successful pump shutoff, otherwise returns False.
         """
 
-        await self._send_command("off")
+        await self._send_command("close")
 
         return True
 
     async def _send_command(self, command: str) -> bool:
 
-        output = subprocess.run(["pumpcontroller.exe", self.serial_number, "01", command])
+        output = subprocess.run(["pumpcontroller.exe", self.serial_number, command, "01"])
         self.logger.info(f"Wrote \"{command}\" to Pump controller")
 
         if output.returncode != 0:
