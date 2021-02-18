@@ -15,6 +15,6 @@
         "max-temperature": 150
     },
     "Pump-Controller-options": {
-        "com-port": "COM1"
+        "serial-number": "BITFT"
     }
 }

@@ -15,31 +15,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from serial_communicator import asyncio, logging, SerialCommunicator
+import asyncio
+import subprocess
+import logging
 
 
-class PumpController(SerialCommunicator):
+class PumpController:
 
-    def __init__(self, com_port: str):
-        super().__init__(com_port, "Pump Controller")
-
-    async def verify_connection(self) -> bool:
-        """
-        Requests name from the device to verify that the initial connection with the Pump Controller was
-        made successfully.
-        """
-
-        if not self.ser.is_open:
-            self.logger.error("Serial connection with Pump Controller was not opened.")
-            return False
-
-        name = await self._send_command("*IDN?")
-
-        if len(name) == 0:
-            self.logger.error(f"Error in verifying Pump Controller with response {name}")
-            return False
-
-        return True
+    def __init__(self, serial_number: str):
+        self.serial_lock = asyncio.Lock()
+        self.serial_number = serial_number
+        self.logger = logging.getLogger("serial")
 
     async def turn_on(self) -> bool:
         """
@@ -47,11 +33,8 @@ class PumpController(SerialCommunicator):
         a successful pump power on, otherwise returns False.
         """
 
-        response = await self._send_command("on")
+        await self._send_command("open")
 
-        if (len(response) == 0):
-            self.logger.error(f"The Pump Controller failed to response to a request to turn on the pump.")
-            return False
         return True
 
     async def turn_off(self) -> bool:
@@ -60,16 +43,22 @@ class PumpController(SerialCommunicator):
         a successful pump shutoff, otherwise returns False.
         """
 
-        response = await self._send_command("off")
+        await self._send_command("off")
 
-        if (len(response) == 0):
-            self.logger.error(f"The Pump Controller failed to response to a request to turn off the pump.")
-            return False
         return True
+
+    async def _send_command(self, command: str) -> bool:
+
+        output = subprocess.run(["pumpcontroller.exe", self.serial_number, "01", command])
+        self.logger.info(f"Wrote \"{command}\" to Pump controller")
+
+        if output.returncode != 0:
+            self.logger.warning(f"The pump controller failed with exit code {output.returncode} for command: {command}")
+            raise IOError(f"The Pump Control returned a failed exit code for command {command}")
 
     async def reset(self) -> bool:
         """
         Provided to match function calls given in other SerialCommunicator objects. Calls turn_off
         """
 
-        return self.turn_off()
+        return await self.turn_off()

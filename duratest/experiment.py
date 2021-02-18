@@ -120,9 +120,6 @@ class Experiment:
 
         self.pump_controller = self._get_new_PumpController(self.pump_options)
 
-        if(not await self.pump_controller.verify_connection()):
-            raise ExperimentError("The Pump Controller has failed to verify its connection.")
-
         if (not await self.pump_controller.turn_on()):
             raise ExperimentError("The Pump Controller has failed to turn on.")
 
@@ -210,7 +207,7 @@ class Experiment:
         """
 
         try:
-            return PumpController(pump_dict["com-port"])
+            return PumpController(pump_dict["serial-number"])
         except IOError:
             raise ExperimentError("Unable to establish communication with the Pump Controller.")
 
