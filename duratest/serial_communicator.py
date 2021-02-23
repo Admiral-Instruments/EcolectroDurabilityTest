@@ -26,16 +26,6 @@ class SerialCommunicator:
         self.com_port = com_port
         self.name = name
         self.serial_lock = asyncio.Lock()
-        try:
-            self.ser = serial.Serial(port=com_port,
-                                     baudrate=4800,
-                                     bytesize=serial.EIGHTBITS,
-                                     timeout=1,
-                                     parity=serial.PARITY_NONE,
-                                     stopbits=serial.STOPBITS_ONE)
-        except IOError as err:
-            self.logger.error(f"Error opening serial communication with {name}")
-            raise err
 
     async def verify_connection(self) -> bool:
         raise NotImplementedError("Connection must be verified before proceeding")

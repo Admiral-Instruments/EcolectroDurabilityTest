@@ -15,12 +15,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from serial_communicator import asyncio, logging, SerialCommunicator
+from serial_communicator import asyncio, logging, SerialCommunicator, serial
 
 
 class BKOperator(SerialCommunicator):
     def __init__(self, com_port: str):
         super().__init__(com_port, "BK Power Supply")
+        try:
+            self.ser = serial.Serial(port=com_port,
+                                     baudrate=4800,
+                                     bytesize=serial.EIGHTBITS,
+                                     timeout=1,
+                                     parity=serial.PARITY_NONE,
+                                     stopbits=serial.STOPBITS_ONE)
+        except IOError as err:
+            self.logger.error(f"Error opening serial communication with {self.name}")
+            raise err
 
     async def verify_connection(self) -> bool:
         """
