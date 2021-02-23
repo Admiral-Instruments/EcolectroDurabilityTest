@@ -31,19 +31,4 @@ class SerialCommunicator:
         raise NotImplementedError("Connection must be verified before proceeding")
 
     async def _send_command(self, command: str) -> str:
-        """
-        Locks the resource and sends ascii text to a serial port and waits until 100 bytes are read back or 1 seconds have passed. Returns
-        the bytes read from the serial port in ascii format with new line characters stripped.
-        """
-
-        if self.ser is None:
-            raise IOError(f"Attempting to write to {self.name} which has no software serial connection.")
-
-        await self.serial_lock.acquire()
-        written = bytes(str().join((command, "\r")), "ascii")
-        self.logger.info(f"Wrote {written} to {self.name}")
-        self.ser.write(written)
-        ret = self.ser.read(100).decode("ascii").rstrip("\n")
-        self.ser.flush()
-        self.serial_lock.release()
-        return ret
+        raise NotImplementedError("Device must have usable send command interface.")

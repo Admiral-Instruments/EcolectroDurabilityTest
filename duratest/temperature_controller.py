@@ -88,9 +88,28 @@ class TemperatureController(SerialCommunicator):
         True if the device communicates back that it has successfully reset itself, otherwise False.
         """
 
-        response = await self._send_command("*RST")
+        response = await self._send_command("PF30 1")
 
         if len(response) == 0:
             self.logger.error("The Temperature Controller failed to acknowledge a request to reset its state.")
             return False
         return True
+
+    async def _send_command(self, command: str) -> str:
+        """
+        Locks the resource and sends ascii text to a serial port and waits until 100 bytes are read back or 1 seconds have passed. Returns
+        the bytes read from the serial port in ascii format with new line characters stripped.
+        """
+
+        if self.ser is None:
+            raise IOError(f"Attempting to write to {self.name} which has no software serial connection.")
+
+        await self.serial_lock.acquire()
+        written = bytes(str.join(["*", command, "\r"]), "ascii")
+        self.logger.info(f"Wrote {written} to {self.name}")
+        self.ser.write(written)
+        ret = self.ser.read(100).decode("ascii").rstrip("\n")
+        self.ser.flush()
+        self.serial_lock.release()
+        return ret
+
