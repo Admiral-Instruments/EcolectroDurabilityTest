@@ -28,7 +28,7 @@ class SerialCommunicator:
         self.serial_lock = asyncio.Lock()
         try:
             self.ser = serial.Serial(port=com_port,
-                                     baudrate=9600,
+                                     baudrate=4800,
                                      bytesize=serial.EIGHTBITS,
                                      timeout=1,
                                      parity=serial.PARITY_NONE,
@@ -46,7 +46,7 @@ class SerialCommunicator:
         the bytes read from the serial port in ascii format with new line characters stripped.
         """
 
-        if(self.ser is None):
+        if self.ser is None:
             raise IOError(f"Attempting to write to {self.name} which has no software serial connection.")
 
         await self.serial_lock.acquire()

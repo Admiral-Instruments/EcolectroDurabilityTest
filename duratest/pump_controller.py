@@ -33,9 +33,7 @@ class PumpController:
         a successful pump power on, otherwise returns False.
         """
 
-        await self._send_command("open")
-
-        return True
+        return await self._send_command("open")
 
     async def turn_off(self) -> bool:
         """
@@ -43,9 +41,7 @@ class PumpController:
         a successful pump shutoff, otherwise returns False.
         """
 
-        await self._send_command("close")
-
-        return True
+        return await self._send_command("close")
 
     async def _send_command(self, command: str) -> bool:
 
@@ -54,7 +50,9 @@ class PumpController:
 
         if output.returncode != 0:
             self.logger.warning(f"The pump controller failed with exit code {output.returncode} for command: {command}")
-            raise IOError(f"The Pump Control returned a failed exit code for command {command}")
+            return False
+
+        return True
 
     async def reset(self) -> bool:
         """

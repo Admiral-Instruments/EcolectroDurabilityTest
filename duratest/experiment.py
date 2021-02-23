@@ -79,6 +79,8 @@ class Experiment:
 
         await asyncio.gather(*[device.reset() for device in devices])
 
+        return True
+
     async def _start_experiment(self):
         """
         Readies each device and sets the desired setpoint for each device using the values stored in the experiment.json file.
@@ -102,14 +104,14 @@ class Experiment:
 
         self.bk_operator = self._get_new_BK(self.bk_options)
 
-        if(not await self.bk_operator.verify_connection()):
+        if not await self.bk_operator.verify_connection():
             raise ExperimentError("The BK Power Supply has failed to verify its connection")
 
         # We can just check the voltage ourselves during sampling
-        if (not await self.bk_operator.set_voltage_limits(self.bk_options["minimum-voltage"], self.bk_options["maximum-voltage"])):
+        if not await self.bk_operator.set_voltage_limits(self.bk_options["minimum-voltage"], self.bk_options["maximum-voltage"]):
             raise ExperimentError("The BK Power Supply has failed to set Experiment voltage limits.")
 
-        if (not await self.bk_operator.set_current(self.bk_options["current-setpoint"])):
+        if not await self.bk_operator.set_current(self.bk_options["current-setpoint"]):
             raise ExperimentError("The BK Power Supply has failed to set the current setpoint")
 
     async def _ready_Pump_Controller(self) -> None:
@@ -120,7 +122,7 @@ class Experiment:
 
         self.pump_controller = self._get_new_PumpController(self.pump_options)
 
-        if (not await self.pump_controller.turn_on()):
+        if not await self.pump_controller.turn_on():
             raise ExperimentError("The Pump Controller has failed to turn on.")
 
     async def _ready_Temp_Controller(self) -> None:
@@ -132,10 +134,10 @@ class Experiment:
 
         self.temp_controller = self._get_new_TemperatureController(self.temperature_options)
 
-        if(not await self.temp_controller.verify_connection()):
+        if not await self.temp_controller.verify_connection():
             raise ExperimentError("The Temperature Controller has failed to verify its connection")
 
-        if(not await self.temp_controller.set_temperature(self.temperature_options["temperature-setpoint"])):
+        if not await self.temp_controller.set_temperature(self.temperature_options["temperature-setpoint"]):
             raise ExperimentError("The Temperature Controller has failed to set the temperature setpoint.")
 
     async def _process_readings(self) -> bool:
@@ -154,6 +156,8 @@ class Experiment:
         with open(self.save_path, "a") as out:
             out.write(", ".join(map(str, readings)))
             out.write("\n")
+
+        return True
 
     def _throw_on_bad_readings(self, readings: tuple) -> None:
         """
@@ -187,7 +191,7 @@ class Experiment:
         temperature = asyncio.create_task(self.bk_operator.get_voltage())
         await asyncio.gather(current, voltage, temperature)
 
-        return (current.result(), voltage.result(), temperature.result())
+        return current.result(), voltage.result(), temperature.result()
 
     def _get_new_BK(self, bk_dict: dict) -> BKOperator:
         """

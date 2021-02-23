@@ -64,7 +64,7 @@ class BKOperator(SerialCommunicator):
 
         response = await self._send_command("meas:curr?")
 
-        if (len(response) == 0):
+        if len(response) == 0:
             raise IOError("Error requesting current from Power Supply. There was no response.")
 
         try:
@@ -81,7 +81,7 @@ class BKOperator(SerialCommunicator):
 
         response = await self._send_command("meas:volt?")
 
-        if (len(response) == 0):
+        if len(response) == 0:
             raise IOError("Error requesting voltage from Power Supply. There was no response.")
 
         try:
@@ -110,7 +110,7 @@ class BKOperator(SerialCommunicator):
         acknowledges it has been reset, otherwise False.
         """
 
-        if (self.ser is None):
+        if self.ser is None:
             return False
 
         response = await self._send_command("*RST")

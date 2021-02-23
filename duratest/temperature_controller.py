@@ -49,7 +49,7 @@ class TemperatureController(SerialCommunicator):
 
         response = await self._send_command(f"PRoG>SP1>{temperature}")
 
-        if (len(response) == 0):
+        if len(response) == 0:
             self.logger.error("The Temperature Controller failed to acknowledge a change in Temperature setpoint")
             return False
         return True
@@ -63,7 +63,7 @@ class TemperatureController(SerialCommunicator):
 
         response = await self._send_command("get temperature")
 
-        if (len(response) == 0):
+        if len(response) == 0:
             raise IOError("Error requesting temperature from Temperature Controller. There was no response.")
 
         try:
@@ -80,7 +80,7 @@ class TemperatureController(SerialCommunicator):
 
         response = await self._send_command("*RST")
 
-        if (len(response) == 0):
+        if len(response) == 0:
             self.logger.error("The Temperature Controller failed to acknowledge a request to reset its state.")
             return False
         return True
