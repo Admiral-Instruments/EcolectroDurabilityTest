@@ -61,9 +61,10 @@ class BKOperator(SerialCommunicator):
 
         response = await self._send_command(f"curr {current}")
 
-        if len(response) == 0:
-            self.logger.error("Error requesting a change in the current setpoint of the power supply.")
-            return False
+        # TODO: Confirm response in testing
+        # if len(response) == 0:
+        #    self.logger.error("Error requesting a change in the current setpoint of the power supply.")
+        #    return False
         return True
 
     async def get_current(self) -> float:
@@ -109,9 +110,10 @@ class BKOperator(SerialCommunicator):
         response = await self._send_command(f"volt:prot {max_voltage}")
         # there doesn't appear to be a way to set the minimum voltage... TODO: test out sending these as a tuple (min,max)
 
-        if len(response) == 0:
-            self.logger.error("Error requesting a change in the voltage limits of the power supply.")
-            return False
+        # TODO: Confirm response in testing
+        # if len(response) == 0:
+        #    self.logger.error("Error requesting a change in the voltage limits of the power supply.")
+        #    return False
         return True
 
     async def reset(self) -> bool:
@@ -125,7 +127,8 @@ class BKOperator(SerialCommunicator):
 
         response = await self._send_command("*RST")
 
-        return len(response) > 0
+        # TODO: Confirm response in testing
+        return True
 
     async def _send_command(self, command: str) -> str:
         """
