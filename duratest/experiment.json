@@ -3,14 +3,14 @@
     "duration": 120,
     "save-path": "test_dir/deeper_test_dir/deepest_test_dir/test.csv",
     "Power-Supply-options": {
-        "com-port": "/dev/tty.usbserial-0001",
-        "current-setpoint": 1.2,
-        "maximum-voltage": 10,
-        "minimum-voltage": 0.1,
+        "com-port": "COM4",
+        "current-setpoint": 1,
+        "maximum-voltage": 1.67,
+        "minimum-voltage": 1.5,
         "max-dV": 1
     },
     "Temperature-Controller-options": {
-        "com-port": "COM2",
+        "com-port": "COM3",
         "temperature-setpoint": 50,
         "max-temperature": 150
     },

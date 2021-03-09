@@ -24,10 +24,10 @@ class TemperatureController(SerialCommunicator):
         super().__init__(com_port, "Temperature Controller")
         try:
             self.ser = serial.Serial(port=com_port,
-                                     baudrate=4800,
+                                     baudrate=19200,
                                      bytesize=serial.EIGHTBITS,
                                      timeout=1,
-                                     parity=serial.PARITY_NONE,
+                                     parity=serial.PARITY_ODD,
                                      stopbits=serial.STOPBITS_ONE)
         except IOError as err:
             self.logger.error(f"Error opening serial communication with {self.name}")
@@ -43,7 +43,7 @@ class TemperatureController(SerialCommunicator):
             self.logger.error("Serial connection with Temperature Controller was not opened.")
             return False
 
-        name = await self._send_command("*IDN?")
+        name = await self._send_command("GF20")
 
         if len(name) == 0:
             self.logger.error(f"Error in verifying Temperature Controller with response {name}")
@@ -105,7 +105,7 @@ class TemperatureController(SerialCommunicator):
             raise IOError(f"Attempting to write to {self.name} which has no software serial connection.")
 
         await self.serial_lock.acquire()
-        written = bytes(str().join(["*", command, "\r"]), "ascii")
+        written = bytes(str().join(["*", command, "\r\n"]), "ascii")
         self.logger.info(f"Wrote {written} to {self.name}")
         self.ser.write(written)
         ret = self.ser.read(100).decode("ascii").rstrip("\n")

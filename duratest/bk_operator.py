@@ -42,14 +42,11 @@ class BKOperator(SerialCommunicator):
             logging.error("Error opening serial connection with BK Power Supply.")
             return False
 
-        await self._send_command("*RST")
-        await asyncio.sleep(5)
+        await self._send_command("*CLS")
         name = await self._send_command("*IDN?")
 
         if len(name) == 0:
             return False
-
-        await self._send_command("outp on")
 
         return True
 
@@ -60,6 +57,7 @@ class BKOperator(SerialCommunicator):
         """
 
         response = await self._send_command(f"curr {current}")
+        await self._send_command("outp 1")
 
         # TODO: Confirm response in testing
         # if len(response) == 0:
@@ -125,7 +123,7 @@ class BKOperator(SerialCommunicator):
         if self.ser is None:
             return False
 
-        response = await self._send_command("*RST")
+        response = await self._send_command("outp 0")
 
         # TODO: Confirm response in testing
         return True
@@ -140,7 +138,7 @@ class BKOperator(SerialCommunicator):
             raise IOError(f"Attempting to write to {self.name} which has no software serial connection.")
 
         await self.serial_lock.acquire()
-        written = bytes(str().join((command, "\r")), "ascii")
+        written = bytes(str().join((command, "\r\n")), "ascii")
         self.logger.info(f"Wrote {written} to {self.name}")
         self.ser.write(written)
         ret = self.ser.read(100).decode("ascii").rstrip("\n")

@@ -38,6 +38,8 @@ class Experiment:
         if not path.exists(save_dir):
             makedirs(save_dir)
 
+        self.save_file = open(self.save_path, "w")
+
         # save log in same directory that .csv data is stored
         logging.basicConfig(filename=path.join(save_dir, "experiment.log"),
                             level=logging.DEBUG, format="%(asctime)s %(message)s")
@@ -78,6 +80,8 @@ class Experiment:
                                          self.temp_controller, self.pump_controller] if device is not None]
 
         await asyncio.gather(*[device.reset() for device in devices])
+
+        self.save_file.close()
 
         return True
 
@@ -153,9 +157,8 @@ class Experiment:
 
         self._throw_on_bad_readings(readings)
 
-        with open(self.save_path, "a") as out:
-            out.write(", ".join(map(str, readings)))
-            out.write("\n")
+        self.save_file.write(", ".join(map(str, readings)))
+        self.save_file.write("\n")
 
         return True
 
