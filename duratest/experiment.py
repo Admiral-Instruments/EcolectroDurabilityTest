@@ -18,6 +18,7 @@
 import json
 import asyncio
 import logging
+import time
 
 from bk_operator import BKOperator
 from pump_controller import PumpController
@@ -62,7 +63,12 @@ class Experiment:
         estimate it would be bounded above by about duration + duration/sampling_rate)
         """
 
-        await self._start_experiment()
+        task = asyncio.create_task(self._start_experiment())
+        await task
+
+        if self.bk_operator is None or self.pump_controller is None or self.temp_controller is None:
+            raise ExperimentError("Failed to make a connection to all devices")
+
         while self.duration > 0:
             await self._process_readings()
             self.duration -= self.sampling_rate
@@ -74,10 +80,19 @@ class Experiment:
         can fail if communication has been severed, warn user of such later.
         """
 
-        if self.bk_operator is not None and await self.bk_operator.reset():
-            if self.temp_controller is not None and await self.temp_controller.reset():
-                if self.pump_controller is not None:
-                    return await self.pump_controller.reset()
+
+        if self.bk_operator is not None:
+            task = asyncio.create_task(self.bk_operator.reset())
+            await task
+
+        if self.temp_controller is not None: 
+            task = asyncio.create_task(self.temp_controller.reset())
+            await task
+
+        if self.pump_controller is not None:
+            task = asyncio.create_task(self.pump_controller.reset())
+            await task
+
 
         return True
 
@@ -89,12 +104,20 @@ class Experiment:
 
         # note that the BK Power supply takes longer to ready and that the temp controller may be applying
         # temperature BEFORE the BK Power Supply is applying current.
-        if await self._ready_Pump_Controller():
-            if await self._ready_Temp_Controller():
-                await self._ready_BK()
+        task = asyncio.create_task(self._ready_Pump_Controller())
+        await task
+        
+        task = asyncio.create_task(self._ready_Temp_Controller())
+        await task
+
+        task = asyncio.create_task(self._ready_BK())
+        await task
+
+        
 
         with open(self.save_path, "a") as f:
             f.write("Current, Voltage, Temperature\n")
+
 
     async def _ready_BK(self) -> None:
         """
