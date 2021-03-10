@@ -26,7 +26,7 @@ async def main():
     try:
         await exp.run_experiment()
         logger.info("Experiment Finished successfully")
-    except ExperimentError as err:
+    except BaseException as err:
         logger.fatal(str(err) + " Aborting Experiment.")
     finally:
         await exp.stop_experiment()
