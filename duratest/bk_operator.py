@@ -16,6 +16,7 @@
 # SOFTWARE.
 
 from serial_communicator import asyncio, logging, SerialCommunicator, serial
+import time
 
 
 class BKOperator(SerialCommunicator):
@@ -43,6 +44,8 @@ class BKOperator(SerialCommunicator):
             return False
 
         await self._send_command("*CLS")
+        await self._send_command("*RST")
+        time.sleep(3)
         name = await self._send_command("*IDN?")
 
         if len(name) == 0:
@@ -105,6 +108,7 @@ class BKOperator(SerialCommunicator):
         limits, otherwise returns false.
         """
 
+        await self._send_command(f"volt {max_voltage}")
         response = await self._send_command(f"volt:prot {max_voltage}")
         # there doesn't appear to be a way to set the minimum voltage... TODO: test out sending these as a tuple (min,max)
 

@@ -57,7 +57,7 @@ class TemperatureController(SerialCommunicator):
         was successfully set and the device responded indicating success, otherwise False.
         """
 
-        response = await self._send_command(f"PRoG>SP1>{temperature}")
+        response = await self._send_command(f"W400 {temperature}")
 
         if len(response) == 0:
             self.logger.error("The Temperature Controller failed to acknowledge a change in Temperature setpoint")
@@ -71,7 +71,7 @@ class TemperatureController(SerialCommunicator):
         with the Temperature Controller.
         """
 
-        response = await self._send_command("get temperature")
+        response = await self._send_command("G110")
 
         if len(response) == 0:
             raise IOError("Error requesting temperature from Temperature Controller. There was no response.")
@@ -88,7 +88,7 @@ class TemperatureController(SerialCommunicator):
         True if the device communicates back that it has successfully reset itself, otherwise False.
         """
 
-        response = await self._send_command("PF30 1")
+        response = await self._send_command("WF23 8")
 
         if len(response) == 0:
             self.logger.error("The Temperature Controller failed to acknowledge a request to reset its state.")

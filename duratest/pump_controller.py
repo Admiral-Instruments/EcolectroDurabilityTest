@@ -33,7 +33,7 @@ class PumpController:
         a successful pump power on, otherwise returns False.
         """
 
-        return await self._send_command("open")
+        return await self._send_command("close")
 
     async def turn_off(self) -> bool:
         """
@@ -41,7 +41,7 @@ class PumpController:
         a successful pump shutoff, otherwise returns False.
         """
 
-        return await self._send_command("close")
+        return await self._send_command("open")
 
     async def _send_command(self, command: str) -> bool:
 

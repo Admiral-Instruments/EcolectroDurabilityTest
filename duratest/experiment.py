@@ -38,8 +38,6 @@ class Experiment:
         if not path.exists(save_dir):
             makedirs(save_dir)
 
-        self.save_file = open(self.save_path, "w")
-
         # save log in same directory that .csv data is stored
         logging.basicConfig(filename=path.join(save_dir, "experiment.log"),
                             level=logging.DEBUG, format="%(asctime)s %(message)s")
@@ -56,6 +54,7 @@ class Experiment:
 
         # this is overwritten and used to measure dV for successive voltage measurements
         self.previous_voltage = None
+        self.starting_voltage = None
 
     async def run_experiment(self):
         """
@@ -81,8 +80,6 @@ class Experiment:
 
         await asyncio.gather(*[device.reset() for device in devices])
 
-        self.save_file.close()
-
         return True
 
     async def _start_experiment(self):
@@ -96,8 +93,9 @@ class Experiment:
                              self._ready_Pump_Controller(),
                              self._ready_Temp_Controller())
 
-        with open(self.save_path, "w") as out:
-            out.write("Current, Voltage, Temperature\n")
+        
+        with open(self.save_path, "a") as f:
+            f.write("Current, Voltage, Temperature\n")
 
     async def _ready_BK(self) -> None:
         """
@@ -157,8 +155,9 @@ class Experiment:
 
         self._throw_on_bad_readings(readings)
 
-        self.save_file.write(", ".join(map(str, readings)))
-        self.save_file.write("\n")
+        with open(self.save_path, "a") as f:
+            f.write(", ".join(map(str, readings)))
+            f.write("\n")
 
         return True
 
@@ -172,7 +171,7 @@ class Experiment:
             raise ExperimentError(
                 "The experiment stopped because the change in voltage exceeded the allowed tolerance for dV.")
 
-        if abs(readings[1]) > abs(self.bk_options["maximum-voltage"]):
+        if self.starting_voltage is not None and abs(readings[1]) > abs(self.starting_voltage*1.1):
             raise ExperimentError("The experiment stopped because the maximum voltage limit was reached.")
 
         if abs(readings[1]) < abs(self.bk_options["minimum-voltage"]):
@@ -183,6 +182,9 @@ class Experiment:
 
         self.previous_voltage = readings[1]
 
+        if self.starting_voltage == None:
+            self.starting_voltage = readings[1]
+
     async def _get_readings(self) -> tuple:
         """
         Returns (current, voltage, temperature) from connected devices if available, does nothing with
@@ -191,7 +193,7 @@ class Experiment:
 
         current = asyncio.create_task(self.bk_operator.get_current())
         voltage = asyncio.create_task(self.bk_operator.get_voltage())
-        temperature = asyncio.create_task(self.bk_operator.get_voltage())
+        temperature = asyncio.create_task(self.temp_controller.get_temperature())
         await asyncio.gather(current, voltage, temperature)
 
         return current.result(), voltage.result(), temperature.result()

@@ -1,11 +1,11 @@
 {
-    "sampling-rate": 5,
-    "duration": 120,
+    "sampling-rate": 1,
+    "duration": 100,
     "save-path": "test_dir/deeper_test_dir/deepest_test_dir/test.csv",
     "Power-Supply-options": {
         "com-port": "COM4",
-        "current-setpoint": 1,
-        "maximum-voltage": 1.67,
+        "current-setpoint": 0.5,
+        "maximum-voltage": 2.1,
         "minimum-voltage": 1.5,
         "max-dV": 1
     },
