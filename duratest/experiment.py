@@ -78,9 +78,12 @@ class Experiment:
         devices = [device for device in [self.bk_operator,
                                          self.temp_controller, self.pump_controller] if device is not None]
 
-        await asyncio.gather(*[device.reset() for device in devices])
+        if await self.bk_operator.reset():
+            if await self.temp_controller.reset():
+                return await self.pump_controller.reset()
 
         return True
+
 
     async def _start_experiment(self):
         """
@@ -93,7 +96,10 @@ class Experiment:
                              self._ready_Pump_Controller(),
                              self._ready_Temp_Controller())
 
-        
+        if await self._ready_Pump_Controller():
+            if await self._ready_Temp_Controller():
+                await self._ready_BK()
+
         with open(self.save_path, "a") as f:
             f.write("Current, Voltage, Temperature\n")
 
