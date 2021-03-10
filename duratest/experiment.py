@@ -74,9 +74,6 @@ class Experiment:
         can fail if communication has been severed, warn user of such later.
         """
 
-        devices = [device for device in [self.bk_operator,
-                                         self.temp_controller, self.pump_controller] if device is not None]
-
         if await self.bk_operator.reset():
             if await self.temp_controller.reset():
                 return await self.pump_controller.reset()
@@ -91,10 +88,6 @@ class Experiment:
 
         # note that the BK Power supply takes longer to ready and that the temp controller may be applying
         # temperature BEFORE the BK Power Supply is applying current.
-        await asyncio.gather(self._ready_BK(),
-                             self._ready_Pump_Controller(),
-                             self._ready_Temp_Controller())
-
         if await self._ready_Pump_Controller():
             if await self._ready_Temp_Controller():
                 await self._ready_BK()
