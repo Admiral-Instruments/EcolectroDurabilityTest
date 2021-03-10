@@ -74,9 +74,10 @@ class Experiment:
         can fail if communication has been severed, warn user of such later.
         """
 
-        if await self.bk_operator.reset():
-            if await self.temp_controller.reset():
-                return await self.pump_controller.reset()
+        if self.bk_operator is not None and await self.bk_operator.reset():
+            if self.temp_controller is not None and await self.temp_controller.reset():
+                if self.pump_controller is not None:
+                    return await self.pump_controller.reset()
 
         return True
 
