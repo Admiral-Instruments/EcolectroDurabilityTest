@@ -10,7 +10,7 @@
         "max-dV": 1
     },
     "Temperature-Controller-options": {
-        "com-port": "COM3",
+        "com-port": "COM5",
         "temperature-setpoint": 50,
         "max-temperature": 150
     },

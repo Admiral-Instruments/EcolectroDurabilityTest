@@ -39,8 +39,7 @@ class Experiment:
             makedirs(save_dir)
 
         # save log in same directory that .csv data is stored
-        logging.basicConfig(filename=path.join(save_dir, "experiment.log"),
-                            level=logging.DEBUG, format="%(asctime)s %(message)s")
+        logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(message)s", handlers=[logging.FileHandler(path.join(save_dir, "experiment.log")),logging.StreamHandler()])
 
         self.bk_options = data["Power-Supply-options"]
         self.pump_options = data["Pump-Controller-options"]

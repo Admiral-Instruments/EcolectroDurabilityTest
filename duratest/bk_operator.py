@@ -43,6 +43,7 @@ class BKOperator(SerialCommunicator):
             logging.error("Error opening serial connection with BK Power Supply.")
             return False
 
+        await self._send_command("syst:rem")
         await self._send_command("*CLS")
         await self._send_command("*RST")
         time.sleep(3)

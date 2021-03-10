@@ -49,6 +49,8 @@ class TemperatureController(SerialCommunicator):
             self.logger.error(f"Error in verifying Temperature Controller with response {name}")
             return False
 
+        await self._send_command("WF23 6")
+
         return True
 
     async def set_temperature(self, temperature: float) -> bool:
@@ -59,9 +61,6 @@ class TemperatureController(SerialCommunicator):
 
         response = await self._send_command(f"W400 {temperature}")
 
-        if len(response) == 0:
-            self.logger.error("The Temperature Controller failed to acknowledge a change in Temperature setpoint")
-            return False
         return True
 
     async def get_temperature(self) -> float:
@@ -90,9 +89,6 @@ class TemperatureController(SerialCommunicator):
 
         response = await self._send_command("WF23 8")
 
-        if len(response) == 0:
-            self.logger.error("The Temperature Controller failed to acknowledge a request to reset its state.")
-            return False
         return True
 
     async def _send_command(self, command: str) -> str:

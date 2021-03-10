@@ -15,9 +15,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from signal import *
 import asyncio
 from experiment import Experiment, ExperimentError
 import logging
+
+
 
 
 async def main():
@@ -26,6 +29,13 @@ async def main():
     try:
         await exp.run_experiment()
         logger.info("Experiment Finished successfully")
+
+        def cleanup():
+            exp.stop_experiment()
+        
+        for sig in (SIGABRT, SIGBREAK, SIGILL, SIGINT, SIGSEGV, SIGTERM):
+            signal(sig, cleaup)
+
     except BaseException as err:
         logger.fatal(str(err) + " Aborting Experiment.")
     finally:
