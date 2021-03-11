@@ -1,12 +1,13 @@
 {
     "sampling-rate": 1,
     "duration": 120,
-    "save-path": "C:/Users/Ecolectro/Desktop/DurabilityTest/march112021.csv",
+    "data-save-path": "C:/Users/Ecolectro/Desktop/DurabilityTest/data/march112021.csv",
     "Power-Supply-options": {
         "com-port": "COM4",
         "current-setpoint": 0.5,
         "maximum-voltage": 2.2,
         "minimum-voltage": 1.5,
+        "voltage-threshold": 1.1,
         "max-dV": 1
     },
     "Temperature-Controller-options": {
