@@ -111,7 +111,7 @@ class TemperatureController(SerialCommunicator):
             self.serial_lock.release()
             return ret
         except BaseException as e:
-            self.serial_lock.flush()
+            self.ser.flush()
             self.serial_lock.realse()
         
 
