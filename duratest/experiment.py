@@ -33,14 +33,14 @@ class Experiment:
 
         self.sampling_rate = data["sampling-rate"]
         self.duration = data["duration"]
-        self.save_path = data["save-path"]
+        self.save_path = data["data-save-path"]
         save_dir = path.dirname(self.save_path)
 
         if not path.exists(save_dir):
             makedirs(save_dir)
 
         # save log in same directory that .csv data is stored
-        logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(message)s", handlers=[logging.FileHandler(path.join(save_dir, "experiment.log")),logging.StreamHandler()])
+        logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(message)s", handlers=[logging.FileHandler(data["log-save-path"]),logging.StreamHandler()])
 
         self.bk_options = data["Power-Supply-options"]
         self.pump_options = data["Pump-Controller-options"]
@@ -195,7 +195,7 @@ class Experiment:
             raise ExperimentError(
                 "The experiment stopped because the change in voltage exceeded the allowed tolerance for dV.")
 
-        if self.starting_voltage is not None and abs(readings[1]) > abs(self.starting_voltage*1.1):
+        if self.starting_voltage is not None and abs(readings[1]) > abs(self.starting_voltage*self.bk_options["voltage-threshold"]):
             raise ExperimentError("The experiment stopped because the maximum voltage limit was reached.")
 
         if abs(readings[1]) < abs(self.bk_options["minimum-voltage"]):

@@ -2,6 +2,7 @@
     "sampling-rate": 1,
     "duration": 120,
     "data-save-path": "C:/Users/Ecolectro/Desktop/DurabilityTest/data/march112021.csv",
+    "log-save-path": "C:/Users/Ecolectro/Desktop/DurabilityTest/data/march112021.log",
     "Power-Supply-options": {
         "com-port": "COM4",
         "current-setpoint": 0.5,
