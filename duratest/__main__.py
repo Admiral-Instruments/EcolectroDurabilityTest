@@ -23,7 +23,7 @@ import logging
 
 
 
-async def main():
+def main():
     logger = logging.getLogger("experiment")
     exp = Experiment()  # note, experiment.json needs to be in the current working directory!!!
     loop = asyncio.get_event_loop()
@@ -31,17 +31,18 @@ async def main():
         loop.run_until_complete(exp.run_experiment())
         logger.info("Experiment Finished successfully")
 
-        async def cleanup():
-            await exp.stop_experiment()
-        
-        #for sig in (SIGABRT, SIGBREAK, SIGILL, SIGINT, SIGSEGV, SIGTERM):
-        #    signal(sig, cleanup)
+        def cleanup():
+            raise ExperimentError("Experiment cancelled before its specified duration.")
+
+        for sig in (SIGABRT, SIGBREAK, SIGILL, SIGINT, SIGSEGV, SIGTERM):
+            signal(sig, cleanup)
 
     except BaseException as err:
         logger.fatal(str(err) + " Aborting Experiment.")
     finally:
         loop.run_until_complete(exp.stop_experiment())
+        logger.info("Experiment finished.")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

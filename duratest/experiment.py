@@ -80,7 +80,6 @@ class Experiment:
         can fail if communication has been severed, warn user of such later.
         """
 
-
         if self.bk_operator is not None:
             task = asyncio.create_task(self.bk_operator.reset())
             await task
@@ -204,7 +203,7 @@ class Experiment:
 
         self.previous_voltage = readings[1]
 
-        if self.starting_voltage == None:
+        if self.starting_voltage is None:
             self.starting_voltage = readings[1]
 
     async def _get_readings(self) -> tuple:
