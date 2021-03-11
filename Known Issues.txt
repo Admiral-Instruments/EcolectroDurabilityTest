@@ -1,0 +1,5 @@
+1. When trying to launch the application for the first time using startup.bat, you will have to force
+Windows to stop aliasing python. To do this, you will search Apps and Features on the windows search bar. From there
+click on application execution aliases and turn off all related python app installers.
+
+Solution source here: https://superuser.com/questions/1437590/typing-python-on-windows-10-version-1903-command-prompt-opens-microsoft-stor
