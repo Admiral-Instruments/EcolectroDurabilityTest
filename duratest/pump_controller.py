@@ -23,7 +23,6 @@ import logging
 class PumpController:
 
     def __init__(self, serial_number: str):
-        self.serial_lock = asyncio.Lock()
         self.serial_number = serial_number
         self.logger = logging.getLogger("serial")
 

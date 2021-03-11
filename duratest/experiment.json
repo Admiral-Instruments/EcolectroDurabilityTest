@@ -1,11 +1,11 @@
 {
     "sampling-rate": 1,
-    "duration": 100,
-    "save-path": "test_dir/deeper_test_dir/deepest_test_dir/test.csv",
+    "duration": 120,
+    "save-path": "C:/Users/Ecolectro/Desktop/DurabilityTest/march112021.csv",
     "Power-Supply-options": {
         "com-port": "COM4",
         "current-setpoint": 0.5,
-        "maximum-voltage": 2.1,
+        "maximum-voltage": 2.2,
         "minimum-voltage": 1.5,
         "max-dV": 1
     },

@@ -97,14 +97,21 @@ class TemperatureController(SerialCommunicator):
         the bytes read from the serial port in ascii format with new line characters stripped.
         """
 
+
+
         if self.ser is None:
             raise IOError(f"Attempting to write to {self.name} which has no software serial connection.")
+        try:
+            await self.serial_lock.acquire()
+            written = bytes(str().join(["*", command, "\r\n"]), "ascii")
+            self.logger.info(f"Wrote {written} to {self.name}")
+            self.ser.write(written)
+            ret = self.ser.read(100).decode("ascii").rstrip("\n")
+            self.ser.flush()
+            self.serial_lock.release()
+            return ret
+        except BaseException as e:
+            self.serial_lock.flush()
+            self.serial_lock.realse()
+        
 
-        await self.serial_lock.acquire()
-        written = bytes(str().join(["*", command, "\r\n"]), "ascii")
-        self.logger.info(f"Wrote {written} to {self.name}")
-        self.ser.write(written)
-        ret = self.ser.read(100).decode("ascii").rstrip("\n")
-        self.ser.flush()
-        self.serial_lock.release()
-        return ret

@@ -69,6 +69,9 @@ class Experiment:
         if self.bk_operator is None or self.pump_controller is None or self.temp_controller is None:
             raise ExperimentError("Failed to make a connection to all devices")
 
+        task = asyncio.create_task(asyncio.sleep(10))
+        await task
+
         while self.duration > 0:
             await self._process_readings()
             self.duration -= self.sampling_rate

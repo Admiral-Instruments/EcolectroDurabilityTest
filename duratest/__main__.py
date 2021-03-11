@@ -40,6 +40,8 @@ def main():
     except BaseException as err:
         logger.fatal(str(err) + " Aborting Experiment.")
     finally:
+        tasks = asyncio.all_tasks(loop)
+        loop.run_until_complete(asyncio.gather(*tasks))
         loop.run_until_complete(exp.stop_experiment())
         logger.info("Experiment finished.")
 
