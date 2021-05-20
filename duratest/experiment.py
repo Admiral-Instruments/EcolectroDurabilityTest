@@ -77,6 +77,9 @@ class Experiment:
             self.duration -= self.sampling_rate
             await asyncio.sleep(self.sampling_rate)
 
+    def force_stop_experiment(self)-> None:
+        self.duration = 0;              # make it duration so that experiment will stop auto matically. 
+
     async def stop_experiment(self) -> bool:
         """
         Sends the equivalent stop command to each device putting the entire system at rest. TODO: Technically these

@@ -17,6 +17,7 @@
 
 from signal import *
 import asyncio
+from tkinter.constants import NONE
 from experiment import Experiment, ExperimentError
 import logging
 import tkinter as tk
@@ -25,6 +26,8 @@ import sys
 import threading
 import queue
 from tkinter.scrolledtext import ScrolledText
+
+
 
 
 def threadHandler(loop,logger,exp):
@@ -41,11 +44,17 @@ def threadHandler(loop,logger,exp):
     except BaseException as err:
         logger.fatal(str(err) + " Aborting Experiment.")
     finally:
+        logger.info("Final Block start to excute")
+        exp.force_stop_experiment();
+        logger.info("Experiment sampling rate is set to 0 from final block")
         tasks = asyncio.all_tasks(loop)
-        if ((len(tasks) != 0)):
+        logger.info("call all the Tasks from final block")
+        if loop.is_running():
+            logger.info("if loop is execute in final block")
             loop.run_until_complete(asyncio.gather(*tasks))
-            loop.run_until_complete(exp.stop_experiment())
-            logger.info("Experiment finished.")
+            logger.info("gather all task is call from final block")
+        loop.run_until_complete(exp.stop_experiment())
+        logger.info("Experiment finished.")
 
 
 
@@ -136,11 +145,18 @@ class App:
 
     def quit(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
+                self.logger.info("Quit block is start to execute")
+                self.exp.force_stop_experiment();
+                self.logger.info("sampling rate is set to 0 from quite block")
                 tasks = asyncio.all_tasks(self.loop)
-                if ((len(tasks) != 0)):
+                self.logger.info("call all the task  from quite block")
+                if self.loop.is_running():
+                    self.logger.info("if loop is execute in quite block")
                     self.loop.run_until_complete(asyncio.gather(*tasks))
-                    self.loop.run_until_complete(self.exp.stop_experiment())
-                    self.logger.info("Application is close.")
+                    self.logger.info("gatter all task executre in quite block")
+                self.loop.run_until_complete(self.exp.stop_experiment())
+                self.logger.info("stop experiment is call in quite block")
+                self.logger.info("Application is close.")
                 self.root.destroy()
                 
             
@@ -155,6 +171,6 @@ def main():
     threading.Thread(target=threadHandler, args=(loop,logger,exp,), daemon=True).start();
     app = App(root,loop,logger,exp)
     app.root.mainloop()
-
+   
 if __name__ == "__main__":
     main()
